@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.conf import settings
 
 # Create your models here.
 
@@ -13,15 +14,19 @@ class Category(models.Model):
         INCOME='income',"Income"
         EXPENSE='expense','Expense'
 
-    user=models.ForeignKey(CustomUser,on_delete=models.CASCADE,related_name='categories')
-    name=models.CharField(max_length=255,unique=True)
+    user=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,related_name='categories')
+    name=models.CharField(max_length=255)
     type=models.CharField(max_length=20, choices=Type.choices)
-    created_ate=models.DateTimeField(auto_now_add=True)
+    created_at=models.DateTimeField(auto_now_add=True)
+    constraints = [
+    models.UniqueConstraint(
+        fields=["user", "name", "type"],
+        name="unique_category_per_user_type")]
 
 class Transaction(models.Model):
-    user=models.ForeignKey(CustomUser,on_delete=models.CASCADE,related_name='transactions')
-    category=models.ForeignKey(Category,on_delete=models.CASCADE,related_name='transactions')
-    amount=models.IntegerField(min_value=0)
+    user=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,related_name='transactions')
+    category=models.ForeignKey(Category,on_delete=models.PROTECT,related_name='transactions')
+    amount=models.DecimalField(max_digits=12,decimal_places=2)
     description=models.TextField(blank=True)
     date=models.DateField(null=False)
     created_at = models.DateTimeField(auto_now_add=True)
