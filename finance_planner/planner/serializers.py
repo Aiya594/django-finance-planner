@@ -106,13 +106,3 @@ class TransactionSerializer(serializers.ModelSerializer):
             )
 
         return category
-
-    def validate_date(self, value):
-        today = timezone.now().date()
-
-        if value > today:
-            raise serializers.ValidationError(
-                "Date cannot be in the future."
-            )
-
-        return value

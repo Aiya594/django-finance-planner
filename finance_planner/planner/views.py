@@ -15,9 +15,17 @@ class CategoryViewSet(viewsets.ModelViewSet):
         return Category.objects.filter(user=self.request.user)
     
     def perform_create(self, serializer):
-        
         return serializer.save(user=self.request.user)
 
 
 class TransactionViewSet(viewsets.ModelViewSet):
-    pass
+    serializer_class=TransactionSerializer
+    permission_classes=[IsAuthenticated]
+
+    def get_queryset(self):
+        return Transaction.objects.filter(user=self.request.user)
+    
+    def perform_create(self, serializer):
+        return serializer.save(user=self.request.user)
+    
+    
