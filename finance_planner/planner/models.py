@@ -18,10 +18,7 @@ class Category(models.Model):
     name=models.CharField(max_length=255)
     type=models.CharField(max_length=20, choices=Type.choices)
     created_at=models.DateTimeField(auto_now_add=True)
-    constraints = [
-    models.UniqueConstraint(
-        fields=["user", "name", "type"],
-        name="unique_category_per_user_type")]
+    
 
 class Transaction(models.Model):
     user=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,related_name='transactions')

@@ -29,6 +29,9 @@ class CategorySerializer(serializers.ModelSerializer):
             'type',
             'created_at']
         read_only_fields=['id','created_at','user_name']
+        constraints = [models.UniqueConstraint(
+            fields=["user", "name", "type"],
+            name="unique_category_per_user_type")]
     
     def validate_name(self,value):
         value=value.strip()
