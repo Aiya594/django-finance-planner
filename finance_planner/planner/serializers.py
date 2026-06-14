@@ -36,6 +36,30 @@ class CategorySerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('Category name must have at least 3 charachters')
         return value
 
+    def validate(self, attrs):
+        request = self.context.get("request")
+
+        if not request or not request.user.is_authenticated:
+            return attrs
+
+        name = attrs.get("name")
+        category_type = attrs.get("type")
+
+        queryset = Category.objects.filter(
+            user=request.user,
+            name__iexact=name,
+            type=category_type,
+        )
+
+        if self.instance:
+            queryset = queryset.exclude(id=self.instance.id)
+
+        if queryset.exists():
+            raise serializers.ValidationError({
+                "name": "You already have this category with this type."
+            })
+
+        return attrs
 
 class TransactionSerializer(serializers.ModelSerializer):
     user_name = serializers.ReadOnlyField(source="user.username")
