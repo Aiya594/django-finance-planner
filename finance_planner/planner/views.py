@@ -3,6 +3,10 @@ from rest_framework import viewsets,filters
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import PermissionDenied
 
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from django.db.models import Sum
+
 from .models import *
 from .serializers import *
 
@@ -33,5 +37,30 @@ class TransactionViewSet(viewsets.ModelViewSet):
     
     def perform_create(self, serializer):
         return serializer.save(user=self.request.user)
+    
+    @action(detail=False,methods=['get'])
+    def statistics(self,request):
+        queryset = self.get_queryset()
+
+        income = queryset.filter(
+            category__type=Category.Type.INCOME
+        ).aggregate(
+            total=Sum("amount")
+        )["total"] or "0"
+
+        expense = queryset.filter(
+            category__type=Category.Type.EXPENSE
+        ).aggregate(
+            total=Sum("amount")
+        )["total"] or "0"
+
+        balance = income - expense
+
+        return Response({
+            "income": income,
+            "expense": expense,
+            "balance": balance,
+        })
+
     
     
