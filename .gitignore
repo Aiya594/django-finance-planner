@@ -1,5 +1,7 @@
 .venv
+finance_planner/.env
 finance_planner/db.sqlite3
 finance_planner/finance_planner/__pycache__
 finance_planner/planner/__pycache__
 finance_planner/planner/migrations/__pycache__
+staticfiles/

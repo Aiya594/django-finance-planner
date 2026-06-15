@@ -16,8 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
+from planner.urls import frontend 
 
 urlpatterns = [
+    path('', frontend, name='frontend'),
     path('api/v1/', include('planner.urls')),
     path('admin/', admin.site.urls),
     path('auth/',include('dj_rest_auth.urls')),

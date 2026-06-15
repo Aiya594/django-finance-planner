@@ -6,6 +6,7 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db.models import Sum
+from decimal import Decimal
 
 from .models import *
 from .serializers import *
@@ -46,13 +47,13 @@ class TransactionViewSet(viewsets.ModelViewSet):
             category__type=Category.Type.INCOME
         ).aggregate(
             total=Sum("amount")
-        )["total"] or "0"
+        )["total"] or Decimal("0")
 
         expense = queryset.filter(
             category__type=Category.Type.EXPENSE
         ).aggregate(
             total=Sum("amount")
-        )["total"] or "0"
+        )["total"] or Decimal("0")
 
         balance = income - expense
 
@@ -61,6 +62,6 @@ class TransactionViewSet(viewsets.ModelViewSet):
             "expense": expense,
             "balance": balance,
         })
-
     
-    
+def frontend(request):
+    return render(request, "planner/index.html")
